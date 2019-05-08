@@ -2,36 +2,6 @@
 
 int verif_header(char *file, off_t size)
 {
-	const char  *pe;
-
-	if (READ_WORD(file) == 0x5a4d && size > 0x100) // 'MZ` DOS signature 
-	{
-		pe = file + READ_DWORD(file + 0x3C);
-		if (READ_WORD(pe) == 0x4550) //PE signature
-		{
-			pe += 24;
-			if (READ_WORD(pe) == 0x10b) //Optional header magic (32 bits)
-			{
-				dprintf(2, "not a valid format\n");
-				return (0);
-			}
-			else if (READ_WORD(pe) == 0x20b)
-			{
-				printf("file is a PE 64\n");
-				return (16);
-			}
-			else
-			{
-				dprintf(2, "not a valid format\n");
-				return (0);
-			}
-		}
-		else
-		{
-			dprintf(2, "not a valid format\n");
-			return (0);
-		}
-	}
 	if (strncmp(file, ELFMAG, sizeof(ELFMAG) - 1) || size < EI_CLASS)
 	{
 		dprintf(2, "the file is not an elf\n");

@@ -56,23 +56,3 @@ char *get_file(char *name, off_t *file_size)
 	close(fd);
 	return (file);
 }
-
-p_pack *init_struct(void)
-{
-	p_pack *pp;
-
-	if (!(pp = (p_pack *)malloc(sizeof(p_pack))))
-		return NULL;
-	pp->arch =  0;
-	pp->offset_tls_callback = 0;
-	pp->size_section_text = 0;
-	pp->offset_section_text = 0;
-	pp->offset_permissions = 0;
-	pp->value_permissions_text= 0;
-	pp->offset_permissions_text = 0;
-	pp->value_permissions = 0;
-	pp->rva = 0;
-	pp->va_text = 0;
-	pp->virtual_address = 0;
-	return pp;
-}
