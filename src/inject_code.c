@@ -90,10 +90,10 @@ int build_payload(char *file, char *new_file, char *code, off_t code_len, Elf64_
 	memcpy(code + TEXT_OFFSET_OFFSET, &(offset_virt), sizeof(int));
 	memcpy(code + KEY1_OFFSET_OFFSET, key, sizeof(uint64_t));
 	memcpy(code + KEY2_OFFSET_OFFSET, key + 8, sizeof(uint64_t));
-	offset -= (WOODY_DEBUG ? 4 : 0);
-	memcpy(new_file + offset - virt_addr, code, code_len);
+	offset -= ((WOODY_DEBUG ? 4 : 0) + virt_addr + OFFSET_PLACE);
+	memcpy(new_file + offset, code, code_len);
 	offset += code_len;
-	memcpy(new_file + offset - virt_addr, jmp_code, sizeof(jmp_code) - 1);
+	memcpy(new_file + offset, jmp_code, sizeof(jmp_code) - 1);
 	return 1;
 }
 
@@ -103,7 +103,6 @@ char *inject_code(char *file, off_t *file_size, Elf64_Shdr *section, char *key)
 	int error;
 	char *new_file;
 	char code[] = PAYLOAD;
-	off_t cave_size;
 	off_t cave_entry;
 	off_t offset_max;
 
@@ -112,15 +111,9 @@ char *inject_code(char *file, off_t *file_size, Elf64_Shdr *section, char *key)
 	if (error)
 		return (NULL);
 	new_file = get_new_file(file, *file_size);
-	cave_entry = find_cave(file, *file_size, sizeof(code) + 5 , &cave_size);
-	if (!cave_entry)
-	{
-		cave_entry = make_place(&new_file, file_size, sizeof(code) - 1);
-		metamorph_segment(new_file, cave_entry, sizeof(code) - 1, virt_addr);
-	}
-	else
-		printf(" * code cave finded, offset: %lx\n", cave_entry);	
-	cave_entry += virt_addr;
+	cave_entry = make_place(&new_file, file_size, sizeof(code) - 1);
+	metamorph_segment(new_file, cave_entry, sizeof(code) - 1, virt_addr);
+	cave_entry += virt_addr + OFFSET_PLACE;
 	((Elf64_Ehdr *)new_file)->e_entry = cave_entry;
 	build_payload(file, new_file, code, sizeof(code) - 1, section, virt_addr, key);
 	return (new_file);

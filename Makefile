@@ -5,7 +5,6 @@ CFLAGS := -Werror -Wextra -Wall
 CPATH = src/
 CFILES = \
 	main.c \
-	find_cave.c \
 	inject_code.c \
 	section.c \
 	segments.c \

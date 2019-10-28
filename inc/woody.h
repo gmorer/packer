@@ -17,6 +17,7 @@
 # define WOODY_DEBUG 0
 # define DEBUG_PAYLOAD "\xcc\xcc\xcc\xcc"
 # define ADDR_PAYLOAD "\x00\x00\x00\x00\x00\x00\x00\x00"
+# define OFFSET_PLACE 0x800000
 
 # define PRINT_WOODY_PAYLOAD	"\xeb\x14\xb8\x01\x00\x00\x00\xbf\x01\x00\x00\x00\x5e\xba\x0e" \
 								"\x00\x00\x00\x0f\x05\xeb\x13\xe8\xe7\xff\xff\xff\x2e\x2e\x2e" \
@@ -72,20 +73,18 @@
 #  define PAYLOAD DECRYPT_TEXT PRINT_WOODY_PAYLOAD
 # endif
 
-int			verif_header(char *file, off_t size);
+int		verif_header(char *file, off_t size);
 char		*get_file(char *name, off_t *file_size);
 off_t 		make_place(char **new_file, off_t *file_size, off_t code_size);
-off_t 		metamorph_segment(char *file, off_t wanted_address, off_t wanted_size, off_t virt_addr);
+off_t 		metamorph_segment(char *file, off_t addr, off_t size, off_t vaddr);
 off_t		new_section(char **new_file, off_t *file_size, off_t code_size);
-int			is_sect_exec(char *file, off_t file_size, off_t entry_point, int len);
 Elf64_Shdr	*find_sect(char *elf, const char *sect, off_t file_size);
 void		encrypt_section(char *file, Elf64_Shdr *header, char *key);
 void		print_section(char *file, Elf64_Shdr *header);
-off_t		find_cave(char *file, off_t file_size, off_t asked_length, off_t *cave_size);
 char		*inject_code(char *file, off_t *file_size, Elf64_Shdr *section, char *key);
-int			write_to_file(char *file_name, char *content, off_t content_size);
+int		write_to_file(char *file_name, char *content, off_t content_size);
 void		generate_key(char *key);
-int			is_infected(char *file, size_t file_size);
+int		is_infected(char *file, size_t file_size);
 Elf64_Addr	get_virt_addr(char *file, off_t file_size, int *error, off_t *offset_max);
 char 		*get_new_file(char *old_file, off_t file_size);
 
